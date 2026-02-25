@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oncology Clinical Trials Analytics Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy:        #071e3d;
+  --navy-2:      #0d2b52;
+  --navy-3:      #143566;
+  --teal:        #00796b;
+  --teal-mid:    #009688;
+  --teal-light:  #4db6ac;
+  --teal-pale:   #b2dfdb;
+  --teal-bg:     #e0f2f1;
+  --white:       #ffffff;
+  --off:         #f5f8fc;
+  --g50:         #eef2f8;
+  --g100:        #dde6f0;
+  --g200:        #c2d1e3;
+  --g400:        #7a96b4;
+  --g600:        #3d5f80;
+  --amber:       #d97706;
+  --amber-bg:    #fffbeb;
+  --amber-pale:  #fde68a;
+  --red:         #b91c1c;
+  --red-bg:      #fef2f2;
+  --purple:      #6d28d9;
+  --purple-bg:   #f5f3ff;
+  --blue:        #1d4ed8;
+  --blue-bg:     #eff6ff;
+  --green:       #15803d;
+  --green-bg:    #f0fdf4;
+  --shadow-xs:   0 1px 2px rgba(7,30,61,0.06);
+  --shadow-sm:   0 2px 8px rgba(7,30,61,0.08), 0 1px 3px rgba(7,30,61,0.05);
+  --shadow-md:   0 8px 24px rgba(7,30,61,0.10), 0 3px 8px rgba(7,30,61,0.07);
+  --shadow-lg:   0 20px 60px rgba(7,30,61,0.14), 0 8px 20px rgba(7,30,61,0.09);
+  --radius:      12px;
+  --radius-sm:   8px;
+}
+
+body {
+  font-family: 'Cabinet Grotesk', sans-serif;
+  background: var(--off);
+  color: var(--navy);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════════ */
+.header {
+  background: var(--navy);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Mesh gradient background */
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(0,150,136,0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 20%, rgba(20,53,102,0.6) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 70% 80%, rgba(0,121,107,0.12) 0%, transparent 50%);
+}
+
+/* Subtle dot grid */
+.header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+.header-top-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal) 0%, var(--teal-light) 50%, transparent 100%);
+  position: relative;
+  z-index: 2;
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 44px 56px 40px;
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 32px;
+  align-items: center;
+}
+
+.header-kicker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.kicker-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  background: rgba(0,150,136,0.15);
+  border: 1px solid rgba(77,182,172,0.3);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.kicker-sep {
+  width: 20px;
+  height: 1px;
+  background: rgba(255,255,255,0.15);
+}
+
+.header-h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: clamp(28px, 3.5vw, 46px);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.header-h1 em {
+  font-style: italic;
+  color: var(--teal-light);
+}
+
+.header-desc {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  max-width: 560px;
+  line-height: 1.65;
+}
+
+.header-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 8px 14px;
+  backdrop-filter: blur(10px);
+}
+
+.stat-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--teal-light);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.05em;
+  line-height: 1.3;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,150,136,0.12);
+  border: 1px solid rgba(77,182,172,0.2);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--teal-light);
+  letter-spacing: 0.05em;
+}
+
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--teal-light);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(77,182,172,0.4); }
+  50% { opacity: 0.6; box-shadow: 0 0 0 4px rgba(77,182,172,0); }
+}
+
+/* ══════════════════════════════════════════════
+   MAIN CANVAS
+══════════════════════════════════════════════ */
+.canvas {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 56px 64px;
+}
+
+/* ══════════════════════════════════════════════
+   SECTION TITLE
+══════════════════════════════════════════════ */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.section-title-line {
+  flex: 1;
+  height: 1px;
+  background: var(--g100);
+}
+
+.section-title-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--g400);
+  white-space: nowrap;
+  padding: 0 4px;
+}
+
+.section-step {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1.5px solid var(--g100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--g400);
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════
+   FLOW SECTION WRAPPERS
+══════════════════════════════════════════════ */
+.flow-section {
+  margin-bottom: 8px;
+  animation: riseIn 0.5s ease both;
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.flow-section:nth-child(1)  { animation-delay: 0.05s; }
+.flow-section:nth-child(2)  { animation-delay: 0.10s; }
+.flow-section:nth-child(3)  { animation-delay: 0.15s; }
+.flow-section:nth-child(4)  { animation-delay: 0.20s; }
+.flow-section:nth-child(5)  { animation-delay: 0.25s; }
+.flow-section:nth-child(6)  { animation-delay: 0.30s; }
+.flow-section:nth-child(7)  { animation-delay: 0.35s; }
+.flow-section:nth-child(8)  { animation-delay: 0.40s; }
+.flow-section:nth-child(9)  { animation-delay: 0.45s; }
+
+/* ══════════════════════════════════════════════
+   ARROW CONNECTOR
+══════════════════════════════════════════════ */
+.arrow-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  position: relative;
+  margin: 0 auto;
+  width: fit-content;
+  min-width: 200px;
+}
+
+.arrow-track {
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 2px;
+  transform: translateX(-50%);
+  overflow: hidden;
+}
+
+.arrow-track-fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, var(--teal-light), transparent);
+  opacity: 0.3;
+}
+
+/* Flowing dot animation */
+.arrow-dot {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: flowDown 1.8s ease-in-out infinite;
+}
+
+.arrow-dot:nth-child(2) { animation-delay: 0.6s; opacity: 0.6; }
+.arrow-dot:nth-child(3) { animation-delay: 1.2s; opacity: 0.3; }
+
+@keyframes flowDown {
+  0%   { top: -6px; opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+.arrow-label {
+  background: var(--white);
+  border: 1px solid var(--g100);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  font-weight: 500;
+  color: var(--g400);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-xs);
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.arrow-label-icon {
+  color: var(--teal);
+  font-size: 11px;
+  animation: nudge 1.8s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+/* ══════════════════════════════════════════════
+   BASE CARD
+══════════════════════════════════════════════ */
+.card {
+  background: var(--white);
+  border: 1px solid var(--g100);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: box-shadow 0.22s ease, transform 0.22s ease, border-color 0.22s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+  border-color: var(--g200);
+}
+
+/* Top gradient stripe */
+.card-stripe {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.s-ext    { background: linear-gradient(90deg, var(--amber), #fbbf24); }
+.s-ingest { background: linear-gradient(90deg, var(--blue), #60a5fa); }
+.s-etl    { background: linear-gradient(90deg, var(--teal), var(--teal-light)); }
+.s-tf     { background: linear-gradient(90deg, var(--purple), #a78bfa); }
+.s-incr   { background: linear-gradient(90deg, var(--amber), #f59e0b); }
+.s-load   { background: linear-gradient(90deg, var(--teal), #34d399); }
+.s-db     { background: linear-gradient(90deg, var(--red), #f87171); }
+.s-mon    { background: linear-gradient(90deg, var(--amber), #fbbf24); }
+.s-ana    { background: linear-gradient(90deg, var(--blue), #38bdf8); }
+.s-viz    { background: linear-gradient(90deg, var(--purple), var(--teal-light)); }
+
+.card-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  margin-bottom: 10px;
+}
+
+.t-ext    { background: var(--amber-bg);  color: var(--amber);  border: 1px solid #fde68a; }
+.t-ingest { background: var(--blue-bg);   color: var(--blue);   border: 1px solid #bfdbfe; }
+.t-etl    { background: var(--teal-bg);   color: var(--teal);   border: 1px solid var(--teal-pale); }
+.t-tf     { background: var(--purple-bg); color: var(--purple); border: 1px solid #ddd6fe; }
+.t-incr   { background: var(--amber-bg);  color: var(--amber);  border: 1px solid #fde68a; }
+.t-load   { background: var(--teal-bg);   color: var(--teal);   border: 1px solid var(--teal-pale); }
+.t-db     { background: var(--red-bg);    color: var(--red);    border: 1px solid #fecaca; }
+.t-mon    { background: var(--amber-bg);  color: var(--amber);  border: 1px solid #fde68a; }
+.t-ana    { background: var(--blue-bg);   color: var(--blue);   border: 1px solid #bfdbfe; }
+.t-viz    { background: var(--purple-bg); color: var(--purple); border: 1px solid #ddd6fe; }
+
+.card-icon {
+  font-size: 26px;
+  display: block;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 10px;
+}
+
+.card-body {
+  font-size: 11px;
+  color: var(--g600);
+  line-height: 1.7;
+}
+
+.card-list {
+  list-style: none;
+  font-size: 11px;
+  color: var(--g600);
+  line-height: 1;
+}
+
+.card-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--g50);
+}
+
+.card-list li:last-child { border-bottom: none; }
+
+.li-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--g200);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 9.5px;
+  background: var(--g50);
+  color: var(--navy-3);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--g100);
+}
+
+/* ══════════════════════════════════════════════
+   LAYOUT HELPERS
+══════════════════════════════════════════════ */
+.row-single {
+  display: flex;
+  justify-content: center;
+}
+
+.row-single .card {
+  width: 100%;
+  max-width: 560px;
+}
+
+.row-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ══════════════════════════════════════════════
+   HERO: EXTERNAL SOURCE
+══════════════════════════════════════════════ */
+.source-card {
+  background: linear-gradient(135deg, var(--navy-2) 0%, var(--navy-3) 100%);
+  border: 1px solid rgba(77,182,172,0.2);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.source-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 28px 70px rgba(7,30,61,0.2);
+}
+
+.source-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 90% 50%, rgba(0,150,136,0.1) 0%, transparent 60%);
+}
+
+.source-orb {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  background: rgba(0,150,136,0.15);
+  border: 1px solid rgba(77,182,172,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.source-text { position: relative; z-index: 1; flex: 1; }
+
+.source-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.source-title {
+  font-size: 17px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.source-details {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.source-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+/* ══════════════════════════════════════════════
+   ENGINE SECTION (ETL + Transform side by side)
+══════════════════════════════════════════════ */
+.engine-wrapper {
+  background: linear-gradient(135deg, rgba(0,121,107,0.04) 0%, rgba(109,40,217,0.03) 100%);
+  border: 1px solid var(--g100);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.engine-wrapper::before {
+  content: 'CORE ENGINE';
+  position: absolute;
+  top: 16px; right: 18px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: var(--g200);
+  font-weight: 500;
+}
+
+.engine-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* ══════════════════════════════════════════════
+   DATABASE HERO SECTION
+══════════════════════════════════════════════ */
+.db-hero {
+  background: var(--white);
+  border: 1px solid var(--g100);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: box-shadow 0.22s, transform 0.22s;
+}
+
+.db-hero:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+.db-hero-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-2) 100%);
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+
+.db-hero-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 100% at 90% 50%, rgba(0,150,136,0.15), transparent);
+}
+
+.db-header-icon {
+  font-size: 22px;
+  position: relative;
+  z-index: 1;
+}
+
+.db-header-text { position: relative; z-index: 1; }
+
+.db-header-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+}
+
+.db-header-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+  margin-top: 2px;
+}
+
+.db-hero-body {
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.db-table-card {
+  background: var(--off);
+  border: 1px solid var(--g100);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.db-table-card:hover { box-shadow: var(--shadow-sm); }
+
+.db-table-head {
+  background: var(--g50);
+  border-bottom: 1px solid var(--g100);
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.db-table-icon-wrap {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  background: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: white;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.db-table-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--navy);
+  letter-spacing: 0.03em;
+}
+
+.db-table-body {
+  padding: 10px 14px;
+}
+
+.db-col-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--g50);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+}
+
+.db-col-row:last-child { border-bottom: none; }
+
+.db-col-name { color: var(--navy); font-weight: 400; }
+.db-col-type {
+  color: var(--g400);
+  font-size: 8px;
+  background: var(--g50);
+  border: 1px solid var(--g100);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+.db-col-pk {
+  color: var(--amber);
+  font-size: 7px;
+  font-weight: 700;
+  background: var(--amber-bg);
+  border: 1px solid var(--amber-pale);
+  padding: 1px 5px;
+  border-radius: 2px;
+  letter-spacing: 0.08em;
+}
+
+.db-index-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--green-bg);
+  border: 1px solid #bbf7d0;
+  color: var(--green);
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 3px;
+  margin-top: 8px;
+  letter-spacing: 0.08em;
+}
+
+/* ══════════════════════════════════════════════
+   MONITORING + DB side-by-side
+══════════════════════════════════════════════ */
+.db-mon-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+}
+
+/* ══════════════════════════════════════════════
+   STREAMLIT HERO CARD
+══════════════════════════════════════════════ */
+.analytics-card {
+  background: linear-gradient(135deg, var(--blue-bg) 0%, #f0f9ff 100%);
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  max-width: 620px;
+  margin: 0 auto;
+  width: 100%;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.22s, transform 0.22s;
+}
+
+.analytics-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.analytics-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.analytics-icon-wrap {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  background: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  box-shadow: 0 4px 12px rgba(29,78,216,0.25);
+  flex-shrink: 0;
+}
+
+.analytics-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  margin-bottom: 3px;
+}
+
+.analytics-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--blue);
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+
+.analytics-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.a-chip {
+  font-family: 'DM Mono', monospace;
+  font-size: 8.5px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 4px;
+  background: rgba(29,78,216,0.08);
+  color: var(--blue);
+  border: 1px solid rgba(29,78,216,0.15);
+  letter-spacing: 0.06em;
+}
+
+/* ══════════════════════════════════════════════
+   VIZ GRID
+══════════════════════════════════════════════ */
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.viz-card {
+  background: var(--white);
+  border: 1px solid var(--g100);
+  border-radius: 10px;
+  padding: 18px 16px;
+  box-shadow: var(--shadow-xs);
+  transition: box-shadow 0.2s, transform 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.viz-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-3px);
+}
+
+.viz-card-glow {
+  position: absolute;
+  bottom: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.viz-card:hover .viz-card-glow { opacity: 1; }
+
+.viz-icon-wrap {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.viz-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.01em;
+  margin-bottom: 5px;
+}
+
+.viz-desc {
+  font-size: 10.5px;
+  color: var(--g600);
+  line-height: 1.55;
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+.footer {
+  background: var(--navy);
+  position: relative;
+}
+
+.footer-bar {
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal) 0%, var(--teal-light) 40%, rgba(128,203,196,0.2) 100%);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 22px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.legend {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.legend-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+
+.legend-items {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.leg {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.4);
+}
+
+.leg-sw {
+  width: 12px; height: 4px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 800px) {
+  .canvas { padding: 28px 20px 48px; }
+  .header-inner { grid-template-columns: 1fr; padding: 28px 20px 24px; }
+  .header-stats { flex-direction: row; align-items: flex-start; }
+  .engine-grid { grid-template-columns: 1fr; }
+  .db-hero-body { grid-template-columns: 1fr; }
+  .db-mon-grid { grid-template-columns: 1fr; }
+  .viz-grid { grid-template-columns: 1fr 1fr; }
+  .footer-inner { padding: 18px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-top-bar"></div>
+  <div class="header-inner">
+    <div>
+      <div class="header-kicker">
+        <span class="kicker-chip">System Architecture</span>
+        <span class="kicker-sep"></span>
+        <span class="kicker-chip">Modular ETL · v1.0</span>
+      </div>
+      <h1 class="header-h1">
+        Oncology Clinical Trials<br>
+        <em>Analytics Platform</em>
+      </h1>
+      <p class="header-desc">
+        End-to-end data engineering pipeline — from ClinicalTrials.gov REST ingestion through
+        incremental watermark-based ETL, MySQL persistence, and Streamlit + Plotly interactive analytics.
+      </p>
+    </div>
+    <div class="header-stats">
+      <div class="live-badge">
+        <span class="live-dot"></span>
+        Production Architecture
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num">10</div>
+        <div class="stat-label">Architectural<br>Layers</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Plotly Chart<br>Types</div>
+      </div>
+      <div class="stat-pill">
+        <div class="stat-num">2</div>
+        <div class="stat-label">MySQL<br>Tables</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ CANVAS ════════════════════════════════════════════ -->
+<main class="canvas">
+
+  <!-- ──────────────────────────────────────────
+       01 · EXTERNAL DATA SOURCE
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">01</div>
+      <div class="section-title-text">External Data Source</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="row-single">
+      <div class="source-card">
+        <div class="source-orb">🌐</div>
+        <div class="source-text">
+          <div class="source-eyebrow">ClinicalTrials.gov · NIH</div>
+          <div class="source-title">REST API — JSON Data Source</div>
+          <div class="source-details">
+            <span class="source-chip">REST / HTTPS</span>
+            <span class="source-chip">JSON Responses</span>
+            <span class="source-chip">Paginated</span>
+            <span class="source-chip">last_update_posted</span>
+            <span class="source-chip">Oncology Trials</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="arrow-connector">
+      <div class="arrow-track">
+        <div class="arrow-track-fill"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+      </div>
+      <div class="arrow-label"><span class="arrow-label-icon">↓</span> HTTP · JSON Payload</div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────
+       02 · INGESTION LAYER
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">02</div>
+      <div class="section-title-text">Ingestion Layer</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="row-single">
+      <div class="card">
+        <div class="card-stripe s-ingest"></div>
+        <div class="card-tag t-ingest">⚙️ Python Module</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div>
+            <div class="card-icon">📡</div>
+          </div>
+          <div style="flex:1;">
+            <div class="card-title">api_client.py</div>
+            <ul class="card-list">
+              <li><span class="li-dot"></span>Sends HTTP GET requests to ClinicalTrials.gov endpoint</li>
+              <li><span class="li-dot"></span>Manages automatic pagination across all result pages</li>
+              <li><span class="li-dot"></span>Configurable filters: <code>condition</code> · <code>status</code> · <code>date range</code></li>
+              <li><span class="li-dot"></span>Returns raw JSON payload to pipeline orchestrator</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="arrow-connector">
+      <div class="arrow-track">
+        <div class="arrow-track-fill"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+      </div>
+      <div class="arrow-label"><span class="arrow-label-icon">↓</span> Raw JSON Records</div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────
+       03–05 · CORE ENGINE
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">03–05</div>
+      <div class="section-title-text">Core ETL Engine</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="engine-wrapper">
+      <div class="engine-grid">
+
+        <!-- ETL Orchestrator -->
+        <div class="card">
+          <div class="card-stripe s-etl"></div>
+          <div class="card-tag t-etl">🔄 Orchestrator</div>
+          <div class="card-icon">⚙️</div>
+          <div class="card-title">run_pipeline.py</div>
+          <ul class="card-list">
+            <li><span class="li-dot"></span>Retrieves watermark from <code>etl_run_logs</code></li>
+            <li><span class="li-dot"></span>Sequences extract → transform → load</li>
+            <li><span class="li-dot"></span>Triggers transformation on raw data</li>
+            <li><span class="li-dot"></span>Writes run metadata on completion</li>
+          </ul>
+        </div>
+
+        <!-- Transform -->
+        <div class="card">
+          <div class="card-stripe s-tf"></div>
+          <div class="card-tag t-tf">🔧 Transform</div>
+          <div class="card-icon">🔄</div>
+          <div class="card-title">transform.py</div>
+          <ul class="card-list">
+            <li><span class="li-dot"></span>Flattens deeply nested JSON</li>
+            <li><span class="li-dot"></span>Extracts structured analytical fields</li>
+            <li><span class="li-dot"></span>Parses & normalises date formats</li>
+            <li><span class="li-dot"></span>Handles nulls, type casting, defaults</li>
+          </ul>
+        </div>
+
+        <!-- Incremental Logic -->
+        <div class="card">
+          <div class="card-stripe s-incr"></div>
+          <div class="card-tag t-incr">⏱ Incremental</div>
+          <div class="card-icon">🔍</div>
+          <div class="card-title">Watermark Logic</div>
+          <ul class="card-list">
+            <li><span class="li-dot"></span>Compare <code>last_update_posted</code> vs watermark</li>
+            <li><span class="li-dot"></span>Load only new / updated records</li>
+            <li><span class="li-dot"></span>Skip entirely unchanged records</li>
+            <li><span class="li-dot"></span>Advance watermark on success</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="arrow-connector">
+      <div class="arrow-track">
+        <div class="arrow-track-fill"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+      </div>
+      <div class="arrow-label"><span class="arrow-label-icon">↓</span> Cleaned, Filtered Records</div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────
+       06 · LOAD LAYER
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">06</div>
+      <div class="section-title-text">Load Layer</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="row-single">
+      <div class="card">
+        <div class="card-stripe s-load"></div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div>
+            <div class="card-tag t-load">📥 Upsert Strategy</div>
+            <div class="card-icon">⬆️</div>
+          </div>
+          <div style="flex:1;">
+            <div class="card-title">load.py</div>
+            <ul class="card-list">
+              <li><span class="li-dot"></span>Batch INSERT into MySQL <code>clinical_trials</code> table</li>
+              <li><span class="li-dot"></span><code>ON DUPLICATE KEY UPDATE</code> — safe idempotent upsert</li>
+              <li><span class="li-dot"></span>Deduplication enforced on <code>nct_id</code> primary key</li>
+              <li><span class="li-dot"></span>Transaction commit on success · full rollback on failure</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="arrow-connector">
+      <div class="arrow-track">
+        <div class="arrow-track-fill"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+      </div>
+      <div class="arrow-label"><span class="arrow-label-icon">↓</span> Persisted to Storage</div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────
+       07–08 · DATABASE + MONITORING
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">07–08</div>
+      <div class="section-title-text">Database Layer &amp; Monitoring</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="db-mon-grid">
+
+      <!-- MySQL DB Hero -->
+      <div class="db-hero">
+        <div class="db-hero-header">
+          <span class="db-header-icon">🗄️</span>
+          <div class="db-header-text">
+            <div class="db-header-title">MySQL Database</div>
+            <div class="db-header-sub">ANALYTICAL · INDEXED · PERSISTENT</div>
+          </div>
+        </div>
+        <div class="db-hero-body">
+          <div class="db-table-card">
+            <div class="db-table-head">
+              <div class="db-table-icon-wrap">T</div>
+              <div class="db-table-title">clinical_trials</div>
+            </div>
+            <div class="db-table-body">
+              <div class="db-col-row">
+                <span class="db-col-name">nct_id</span>
+                <span class="db-col-pk">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">title</span>
+                <span class="db-col-type">TEXT</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">status · phase</span>
+                <span class="db-col-type">VARCHAR</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">sponsor · condition</span>
+                <span class="db-col-type">VARCHAR</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">start_date · end_date</span>
+                <span class="db-col-type">DATE</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">last_update_posted</span>
+                <span class="db-col-type">DATE</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">country · enrollment</span>
+                <span class="db-col-type">VARCHAR / INT</span>
+              </div>
+              <div class="db-index-badge">✓ Indexed Analytical Columns</div>
+            </div>
+          </div>
+          <div class="db-table-card">
+            <div class="db-table-head">
+              <div class="db-table-icon-wrap">T</div>
+              <div class="db-table-title">etl_run_logs</div>
+            </div>
+            <div class="db-table-body">
+              <div class="db-col-row">
+                <span class="db-col-name">run_id</span>
+                <span class="db-col-pk">PK</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">start_time</span>
+                <span class="db-col-type">DATETIME</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">end_time</span>
+                <span class="db-col-type">DATETIME</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">duration_ms</span>
+                <span class="db-col-type">INT</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">status</span>
+                <span class="db-col-type">ENUM</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">records_inserted</span>
+                <span class="db-col-type">INT</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">records_updated</span>
+                <span class="db-col-type">INT</span>
+              </div>
+              <div class="db-col-row">
+                <span class="db-col-name">error_msg</span>
+                <span class="db-col-type">TEXT</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monitoring -->
+      <div class="card" style="align-self:start;">
+        <div class="card-stripe s-mon"></div>
+        <div class="card-tag t-mon">📊 Observability</div>
+        <div class="card-icon">🛡️</div>
+        <div class="card-title">ETL Run Monitoring</div>
+        <ul class="card-list">
+          <li><span class="li-dot"></span>Persist metadata for every pipeline run</li>
+          <li><span class="li-dot"></span>Track duration in milliseconds</li>
+          <li><span class="li-dot"></span>Status: <code>SUCCESS</code> / <code>FAILED</code> / <code>PARTIAL</code></li>
+          <li><span class="li-dot"></span>Record counts: inserted vs updated</li>
+          <li><span class="li-dot"></span>Watermark timestamp advancement</li>
+          <li><span class="li-dot"></span>Full error message capture on failure</li>
+          <li><span class="li-dot"></span>Run history queryable from dashboard</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="arrow-connector">
+      <div class="arrow-track">
+        <div class="arrow-track-fill"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+      </div>
+      <div class="arrow-label"><span class="arrow-label-icon">↓</span> SQL Queries via SQLAlchemy</div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────
+       09 · ANALYTICS LAYER
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">09</div>
+      <div class="section-title-text">Analytics Layer</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div style="display:flex;justify-content:center;">
+      <div class="analytics-card">
+        <div class="analytics-header">
+          <div class="analytics-icon-wrap">📈</div>
+          <div>
+            <div class="analytics-title">Streamlit Dashboard Application</div>
+            <div class="analytics-sub">MULTI-PAGE · CACHED · INTERACTIVE FILTERS</div>
+          </div>
+        </div>
+        <div class="analytics-chips">
+          <span class="a-chip">@st.cache_data</span>
+          <span class="a-chip">SQLAlchemy Pool</span>
+          <span class="a-chip">Sidebar Filters</span>
+          <span class="a-chip">Phase / Status / Year / Country</span>
+          <span class="a-chip">ETL Monitor Page</span>
+          <span class="a-chip">Analytics Page</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;">
+    <div class="arrow-connector">
+      <div class="arrow-track">
+        <div class="arrow-track-fill"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+        <div class="arrow-dot"></div>
+      </div>
+      <div class="arrow-label"><span class="arrow-label-icon">↓</span> Plotly Figures Rendered</div>
+    </div>
+  </div>
+
+  <!-- ──────────────────────────────────────────
+       10 · VISUALIZATION LAYER
+  ────────────────────────────────────────── -->
+  <div class="flow-section">
+    <div class="section-title">
+      <div class="section-step">10</div>
+      <div class="section-title-text">Visualization Layer — Plotly Interactive Charts</div>
+      <div class="section-title-line"></div>
+    </div>
+    <div class="viz-grid">
+
+      <div class="viz-card">
+        <div class="viz-card-glow" style="background:radial-gradient(circle, rgba(29,78,216,0.08), transparent);"></div>
+        <div class="viz-icon-wrap" style="background:var(--blue-bg);">🎯</div>
+        <div class="viz-title">KPI Cards</div>
+        <div class="viz-desc">Total trials · Active &amp; recruiting counts · Phase distribution summary metrics</div>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-card-glow" style="background:radial-gradient(circle, rgba(109,40,217,0.08), transparent);"></div>
+        <div class="viz-icon-wrap" style="background:var(--purple-bg);">🥧</div>
+        <div class="viz-title">Distribution Charts</div>
+        <div class="viz-desc">Phase breakdown · Status distribution · Sponsor type — Plotly pie &amp; bar charts</div>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-card-glow" style="background:radial-gradient(circle, rgba(0,121,107,0.08), transparent);"></div>
+        <div class="viz-icon-wrap" style="background:var(--teal-bg);">📅</div>
+        <div class="viz-title">Yearly Trends</div>
+        <div class="viz-desc">Trials started per year · Enrollment over time · Completion rates — line &amp; bar</div>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-card-glow" style="background:radial-gradient(circle, rgba(21,128,61,0.08), transparent);"></div>
+        <div class="viz-icon-wrap" style="background:var(--green-bg);">🗺️</div>
+        <div class="viz-title">Geographic Map</div>
+        <div class="viz-desc">Plotly choropleth · Trials by country · Color-scaled density · Interactive tooltips</div>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-card-glow" style="background:radial-gradient(circle, rgba(185,28,28,0.06), transparent);"></div>
+        <div class="viz-icon-wrap" style="background:var(--red-bg);">🔥</div>
+        <div class="viz-title">Heatmap</div>
+        <div class="viz-desc">Phase × Status correlation matrix · Density colour scale · Hover cell details</div>
+      </div>
+
+      <div class="viz-card">
+        <div class="viz-card-glow" style="background:radial-gradient(circle, rgba(217,119,6,0.08), transparent);"></div>
+        <div class="viz-icon-wrap" style="background:var(--amber-bg);">🛡️</div>
+        <div class="viz-title">ETL Monitor Dashboard</div>
+        <div class="viz-desc">Pipeline run history · Duration trend · Success/failure rates · Watermark log table</div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ FOOTER ════════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-bar"></div>
+  <div class="footer-inner">
+    <div class="legend">
+      <span class="legend-label">Layer Key</span>
+      <div class="legend-items">
+        <span class="leg"><span class="leg-sw" style="background:var(--amber)"></span>External / Incremental</span>
+        <span class="leg"><span class="leg-sw" style="background:var(--blue)"></span>Ingestion / Analytics</span>
+        <span class="leg"><span class="leg-sw" style="background:var(--teal)"></span>ETL / Load</span>
+        <span class="leg"><span class="leg-sw" style="background:var(--purple)"></span>Transform / Viz</span>
+        <span class="leg"><span class="leg-sw" style="background:var(--red)"></span>Database</span>
+        <span class="leg"><span class="leg-sw" style="background:var(--amber)"></span>Monitoring</span>
+      </div>
+    </div>
+    <div class="footer-copy">Oncology Clinical Trials Analytics Platform · v1.0 · 2026 · Modular ETL Architecture</div>
+  </div>
+</footer>
+
+</body>
+</html>
